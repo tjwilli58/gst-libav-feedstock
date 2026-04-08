@@ -1,4 +1,4 @@
-{% set version = "1.28.1" %}
+{% set version = "1.28.2" %}
 
 package:
   name: gst-libav
@@ -6,7 +6,7 @@ package:
 
 source:
   url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-{{ version }}.tar.xz
-  sha256: bfa91aaca38d0fd8addcdd559e35b7541e3f32a5f410194ec4ba18040defee9b
+  sha256: 45ba65535870aa7c026119d2e90b35dc760e1cf6f50bffbfe8d71223a3043a4e
 
 build:
   number: 0
