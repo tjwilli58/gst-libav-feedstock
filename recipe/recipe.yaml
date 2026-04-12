@@ -1,0 +1,72 @@
+schema_version: 1
+
+context:
+  version: "1.28.2"
+
+package:
+  name: gst-libav
+  version: ${{ version }}
+
+source:
+  url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-${{ version }}.tar.xz
+  sha256: 45ba65535870aa7c026119d2e90b35dc760e1cf6f50bffbfe8d71223a3043a4e
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - ${{ compiler('c') }}
+    - ${{ stdlib('c') }}
+    - ${{ compiler('cxx') }}
+    - meson
+    - ninja
+    - pkg-config
+    - if: win
+      then: m2-patch
+  host:
+    - setuptools <81
+    - ffmpeg
+    - gstreamer         1.28.2.*
+    - gst-plugins-base  1.28.2.*
+    - glib
+    # Needed for gstreamer-audio-1.0 dependency?
+    # Not sure why, zlib should be a private dependency
+    - zlib
+    - expat
+    - liblzma-devel
+    - if: win
+      then: x265
+    - if: win
+      then: libxml2-devel
+  run:
+    # We want to pin harder than the run_export from gstreamer
+    - gstreamer         1.28.2.*
+    - expat
+    - if: win
+      then: libxml2-devel
+  run_exports:
+    - ${{ pin_subpackage('gst-libav', upper_bound='x.x') }}
+
+tests:
+  - script:
+      - if: not win
+        then: test -f ${PREFIX}/lib/gstreamer-1.0/libgstlibav${SHLIB_EXT}
+      - if: win
+        then: if not exist %LIBRARY_LIB%\\gstreamer-1.0\\gstlibav.dll exit 1
+      - gst-inspect-1.0 --plugin libav
+
+about:
+  license: LGPL-2.1-or-later
+  license_file: COPYING
+  summary: GStreamer plugin for the FFmpeg libav* libraries
+  homepage: http://gstreamer.freedesktop.org/
+  repository: https://gitlab.freedesktop.org/gstreamer/gst-libav
+  documentation: https://gstreamer.freedesktop.org/modules/gst-libav.html
+
+extra:
+  recipe-maintainers:
+    - yishai1999
+    - tjwilli58
+    - scopatz
+    - kuepe-sl
